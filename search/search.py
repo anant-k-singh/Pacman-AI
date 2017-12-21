@@ -50,7 +50,7 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s,s,w,s,w,w,s,w]
 
-def genericSearch(problem, fringe, heuristic=None):
+def genericSearch(problem, ds, heuristic=None):
     """
     Generic search algorithm that takes a problem and a queuing strategy
     and performs a search given that strategy
@@ -80,23 +80,23 @@ def genericSearch(problem, fringe, heuristic=None):
     initial = problem.getStartState()   # Starting state of the problem
 
     # Push a tuple of the start state and blank action list onto the given
-    # fringe data structure. If a priority queue is in use, then calculate
+    # ds data structure. If a priority queue is in use, then calculate
     # the priority using the heuristic
-    if isinstance(fringe, util.Stack) or isinstance(fringe, util.Queue):
-        fringe.push((initial, action_list))
-    elif isinstance(fringe, util.PriorityQueue):
-        fringe.push((initial, action_list), heuristic(initial, problem))
+    if isinstance(ds, util.Stack) or isinstance(ds, util.Queue):
+        ds.push((initial, action_list))
+    elif isinstance(ds, util.PriorityQueue):
+        ds.push((initial, action_list), heuristic(initial, problem))
 
-    # While there are still elements on the fringe, expand the value of each 
+    # While there are still elements on the ds, expand the value of each 
     # node for the node to explore, actions to get there, and the cost. If the
     # node isn't visited already, check to see if node is the goal. If no, then
-    # add all of the node's successors onto the fringe (with relevant 
+    # add all of the node's successors onto the ds (with relevant 
     # information about path and cost associated with that node)
-    while fringe: 
-        if isinstance(fringe, util.Stack) or isinstance(fringe, util.Queue):
-            node, actions = fringe.pop() 
-        elif isinstance(fringe, util.PriorityQueue):
-            node, actions = fringe.pop()
+    while ds: 
+        if isinstance(ds, util.Stack) or isinstance(ds, util.Queue):
+            node, actions = ds.pop() 
+        elif isinstance(ds, util.PriorityQueue):
+            node, actions = ds.pop()
         
         if not node in visited:
             visited.append(node)
@@ -106,12 +106,12 @@ def genericSearch(problem, fringe, heuristic=None):
             for successor in successors:
                 coordinate, direction, cost = successor
                 newActions = actions + [direction]
-                if isinstance(fringe, util.Stack) or isinstance(fringe, util.Queue):
-                    fringe.push((coordinate, newActions))
-                elif isinstance(fringe, util.PriorityQueue):
+                if isinstance(ds, util.Stack) or isinstance(ds, util.Queue):
+                    ds.push((coordinate, newActions))
+                elif isinstance(ds, util.PriorityQueue):
                     newCost = problem.getCostOfActions(newActions) + \
                                heuristic(coordinate, problem)
-                    fringe.push((coordinate, newActions), newCost)                  
+                    ds.push((coordinate, newActions), newCost)                  
 
     return []
     
@@ -127,7 +127,7 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
 
-    # Use the genericSearch method, with the fringe maintained using a Stack
+    # Use the genericSearch method, with the ds maintained using a Stack
     # so that the search proceeds in the order of exploring from the node last
     # discovered
     return genericSearch(problem, util.Stack())
@@ -137,7 +137,7 @@ def breadthFirstSearch(problem):
     Search the shallowest nodes in the search tree first.
     """
 
-    # Use the genericSearch method, with the fringe maintained with a Queue so 
+    # Use the genericSearch method, with the ds maintained with a Queue so 
     # that all nodes on the same level are explored before the next level is 
     # explored. This will find the optimal solution, because each level is 
     # explored before the next, so the first time the goal is reached will be
@@ -161,7 +161,7 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     "Search the node that has the lowest combined cost and heuristic first."
 
-    # Use the genericSearch method, with the fringe maintained with a 
+    # Use the genericSearch method, with the ds maintained with a 
     # PriorityQueue. The cost is calculated using the provided heuristic. 
     # If no heuristic is given (such as UCS), then default to the given
     # nullHeuristic
