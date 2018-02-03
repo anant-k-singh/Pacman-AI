@@ -2,4 +2,5 @@
 A Reinforcement Learning agent to win the classic Pac-Man game(most of the time) with multiple ghosts.
 
 ![alt text](https://github.com/anant-k-singh/Pacman-AI-Berkeley/blob/master/hqdefault.jpg)
+
 Fig. Classic Pacman Game with 2 Ghosts
